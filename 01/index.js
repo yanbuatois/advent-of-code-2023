@@ -20,10 +20,14 @@ console.time('part 1');
 
 const NUMBER_REGEX = /^(\D*(?<firstDigit>\d).*(?<lastDigit>\d)\D*)|(\D*(?<onlyDigit>\d)\D*)$/;
 
-const total = input.map((line) => {
-	const { groups: { firstDigit, lastDigit, onlyDigit } } = NUMBER_REGEX.exec(line);
-	return +(onlyDigit ? `${onlyDigit}${onlyDigit}` : `${firstDigit}${lastDigit}`);
-}).reduce((acc, elt) => acc + elt);
+const total = input
+	.map((line) => {
+		const {
+			groups: { firstDigit, lastDigit, onlyDigit },
+		} = NUMBER_REGEX.exec(line);
+		return +(onlyDigit ? `${onlyDigit}${onlyDigit}` : `${firstDigit}${lastDigit}`);
+	})
+	.reduce((acc, elt) => acc + elt);
 
 console.log(`The total is ${total.toString().red} !`);
 
@@ -47,21 +51,29 @@ const entries = Object.entries(map);
 const COMPLEX_REGEX = /^(?<previous>\D*)(?<firstDigit>\d).*(?<lastDigit>\d)(?<final>\D*)$/;
 const ALTERNATIVE_REGEX = /^(?<previous>\D*)(?<firstDigit>\d)(?<final>\D*)$/;
 
-const part2Total = input.map((line) => {
-	const matching = COMPLEX_REGEX.exec(line) ?? ALTERNATIVE_REGEX.exec(line);
-	const { groups: { previous, firstDigit, lastDigit, final } } = matching ?? {
-		groups: {
-			previous: line,
-			final: line,
-		}
-	};
-	const previousCorresponding = entries.filter(([key]) => previous.includes(key)).toSorted(([keyA], [keyB]) => previous.indexOf(keyA) - previous.indexOf(keyB))?.[0]?.[1];
-	const lastCorresponding = entries.filter(([key]) => final.includes(key)).toSorted(([keyA], [keyB]) => final.lastIndexOf(keyB) - final.lastIndexOf(keyA))?.[0]?.[1];
-	const finalFirst = previousCorresponding ?? firstDigit;
-	const lastFirst = lastCorresponding ?? lastDigit ?? firstDigit ?? previousCorresponding;
+const part2Total = input
+	.map((line) => {
+		const matching = COMPLEX_REGEX.exec(line) ?? ALTERNATIVE_REGEX.exec(line);
+		const {
+			groups: { previous, firstDigit, lastDigit, final },
+		} = matching ?? {
+			groups: {
+				previous: line,
+				final: line,
+			},
+		};
+		const previousCorresponding = entries
+			.filter(([key]) => previous.includes(key))
+			.toSorted(([keyA], [keyB]) => previous.indexOf(keyA) - previous.indexOf(keyB))?.[0]?.[1];
+		const lastCorresponding = entries
+			.filter(([key]) => final.includes(key))
+			.toSorted(([keyA], [keyB]) => final.lastIndexOf(keyB) - final.lastIndexOf(keyA))?.[0]?.[1];
+		const finalFirst = previousCorresponding ?? firstDigit;
+		const lastFirst = lastCorresponding ?? lastDigit ?? firstDigit ?? previousCorresponding;
 
-	return +`${finalFirst}${lastFirst}`;
-}).reduce((acc, elt) => acc + elt);
+		return +`${finalFirst}${lastFirst}`;
+	})
+	.reduce((acc, elt) => acc + elt);
 
 console.log(`The true total of calibration values is ${part2Total.toString().green} !`);
 console.timeEnd('part 2');
